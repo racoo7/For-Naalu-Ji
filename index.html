@@ -2,106 +2,249 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>A Quick Question... ❤️</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Happy Girlfriend Day, My Love! ❤️</title>
   <!-- Confetti Library -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
     body {
       margin: 0;
-      padding: 0;
+      padding: 20px 15px;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      background-color: #ffe6e8;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #feada6 100%);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       text-align: center;
-      overflow: hidden;
+      overflow-x: hidden;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 30px 20px;
+      border-radius: 28px;
+      box-shadow: 0 15px 35px rgba(214, 51, 132, 0.2);
+      width: 100%;
+      max-width: 380px;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    .badge {
+      display: inline-block;
+      background: #ffe0e6;
+      color: #ff4b6e;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
     }
     h1 {
-      color: #d63384;
-      font-size: 2rem;
-      margin-bottom: 30px;
-      padding: 0 20px;
+      color: #2c2c2c;
+      font-size: 1.35rem;
+      line-height: 1.4;
+      margin: 0 0 20px 0;
     }
-    .btn-container {
+    .options-container {
       display: flex;
-      gap: 20px;
-      align-items: center;
-      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
       position: relative;
+      min-height: 180px;
     }
-    button {
-      padding: 12px 28px;
-      font-size: 1.2rem;
-      font-weight: bold;
-      border: none;
-      border-radius: 25px;
+    .option-btn {
+      width: 100%;
+      padding: 16px 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      border: 2px solid #ffe0e4;
+      border-radius: 18px;
+      background-color: #ffffff;
+      color: #4a4a4a;
       cursor: pointer;
-      transition: transform 0.2s ease, font-size 0.2s ease;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.03);
+      transition: transform 0.2s ease, opacity 0.2s ease;
+      touch-action: manipulation;
     }
-    #yesBtn {
+    .start-btn {
       background-color: #ff4b6e;
       color: white;
-      box-shadow: 0 4px 15px rgba(255, 75, 110, 0.4);
+      border: none;
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding: 16px 30px;
+      border-radius: 25px;
+      cursor: pointer;
+      box-shadow: 0 5px 20px rgba(255, 75, 110, 0.4);
+      transition: transform 0.2s ease;
     }
-    #noBtn {
-      background-color: #6c757d;
-      color: white;
-      position: absolute;
-      left: 120px;
+    .start-btn:active {
+      transform: scale(0.95);
     }
-    #successMessage {
+    #quizCard, #finalScreen {
       display: none;
-      font-size: 1.8rem;
-      color: #d63384;
-      margin-top: 20px;
     }
   </style>
 </head>
 <body>
 
-  <div id="quizBox">
-    <h1 id="questionText">Will you go out on a date with me this weekend? 💕</h1>
-    <div class="btn-container">
-      <button id="yesBtn" onclick="handleYes()">Yes! 🥰</button>
-      <button id="noBtn" onmouseover="dodge()" onclick="dodge()">No 😜</button>
+  <!-- 🌹 OPENING CARD: HAPPY GIRLFRIEND DAY -->
+  <div class="card" id="startScreen">
+    <div class="badge">Happy Girlfriend Day! 💕</div>
+    <h1>Hey Bebo, Naalu, my cute Laado! 🥰</h1>
+    <p style="color: #666; font-size: 1.05rem; line-height: 1.5; margin-bottom: 25px;">
+      Today is all about celebrating my favorite person in the world! <br><br>
+      Before you get your special surprise, my silly Bandariya has to pass a quick Girlfriend Day Quiz. Ready?
+    </p>
+    <button class="start-btn" onclick="startQuiz()">Start The Quiz ❤️</button>
+  </div>
+
+  <!-- ❓ QUIZ CARD (IMAGE-FREE) -->
+  <div class="card" id="quizCard">
+    <div class="badge" id="stepText">Question 1</div>
+    <h1 id="questionText">Loading...</h1>
+    
+    <div class="options-container" id="optionsBox">
+      <!-- Options rendered dynamically -->
     </div>
   </div>
 
-  <div id="successMessage">
-    🎉 Yay! I knew you'd say yes! <br> Get ready for the best date ever ❤️
+  <!-- 🎉 CLOSING CARD -->
+  <div class="card" id="finalScreen">
+    <div class="badge">Happy Girlfriend Day, Bebo! ❤️</div>
+    <h1 style="color: #ff4b6e; font-size: 1.5rem; margin-bottom: 12px;">You Passed My Love! 👑</h1>
+    <p style="color: #555; font-size: 1rem; line-height: 1.6; margin-bottom: 20px;">
+      I knew you'd get every answer right, Naalu! You truly are the best thing that ever happened to me, my cute Laado. 
+      <br><br>
+      Thank you for being my silly Bandariya, my best friend, and my whole world. I love you so much! 💕
+    </p>
   </div>
 
   <script>
-    let yesScale = 1;
+    // 💡 YOUR QUESTIONS & ANSWERS (Add or edit questions right here!)
+    const quizData = [
+      {
+        question: "Who is the cutest, sweetest, and most special girl in the universe?",
+        options: [
+          { text: "My Bebo / Naalu 🥰", isCorrect: true },
+          { text: "Someone else 🙈", isCorrect: false, trick: "runaway" },
+          { text: "Nobody 😜", isCorrect: false, trick: "shrink" }
+        ]
+      },
+      {
+        question: "Who loves who more in this relationship?",
+        options: [
+          { text: "You love me way more ❤️", isCorrect: true },
+          { text: "I love you more 😜", isCorrect: false, trick: "alert" },
+          { text: "It's equal 🤷‍♂️", isCorrect: false, trick: "swap" }
+        ]
+      },
+      {
+        question: "Will my cute Laado be my date for Girlfriend Day?",
+        options: [
+          { text: "YES! 1000x YES! 😍", isCorrect: true },
+          { text: "No, silly Bandariya! 🐒", isCorrect: false, trick: "runaway" }
+        ]
+      }
+    ];
 
-    function dodge() {
-      const btn = document.getElementById('noBtn');
-      // Calculate random positions within screen bounds
-      const x = Math.random() * (window.innerWidth - btn.offsetWidth - 40);
-      const y = Math.random() * (window.innerHeight - btn.offsetHeight - 40);
-      
-      btn.style.position = 'fixed';
-      btn.style.left = `${Math.max(20, x)}px`;
-      btn.style.top = `${Math.max(20, y)}px`;
+    let currentStep = 0;
 
-      // Make Yes button bigger every time she tries to click No
-      yesScale += 0.2;
-      document.getElementById('yesBtn').style.transform = `scale(${yesScale})`;
+    function startQuiz() {
+      document.getElementById('startScreen').style.display = 'none';
+      document.getElementById('quizCard').style.display = 'block';
+      renderQuestion();
     }
 
-    function handleYes() {
-      document.getElementById('quizBox').style.display = 'none';
-      document.getElementById('successMessage').style.display = 'block';
+    function renderQuestion() {
+      const q = quizData[currentStep];
+      document.getElementById('stepText').innerText = `Question ${currentStep + 1} of ${quizData.length}`;
+      document.getElementById('questionText').innerText = q.question;
       
-      // Trigger Confetti
+      const optionsBox = document.getElementById('optionsBox');
+      optionsBox.innerHTML = '';
+
+      q.options.forEach((opt, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = opt.text;
+
+        if (opt.isCorrect) {
+          btn.onclick = () => handleCorrect();
+        } else {
+          if (opt.trick === 'runaway') {
+            btn.onclick = (e) => dodgeButton(e.target);
+            btn.ontouchstart = (e) => dodgeButton(e.target);
+          } else if (opt.trick === 'shrink') {
+            btn.onclick = (e) => shrinkButton(e.target);
+          } else if (opt.trick === 'alert') {
+            btn.onclick = () => alert('⚠️ SYSTEM ERROR: Illegal answer detected! Bebo, pick the right option! 😜');
+          } else if (opt.trick === 'swap') {
+            btn.onclick = () => swapOptions();
+          }
+        }
+        optionsBox.appendChild(btn);
+      });
+    }
+
+    // TRICK 1: Button teleports away on mobile touch / click
+    function dodgeButton(btn) {
+      btn.style.position = 'fixed';
+      const x = Math.random() * (window.innerWidth - btn.offsetWidth - 30);
+      const y = Math.random() * (window.innerHeight - btn.offsetHeight - 30);
+      btn.style.left = `${Math.max(15, x)}px`;
+      btn.style.top = `${Math.max(15, y)}px`;
+      btn.style.zIndex = '999';
+    }
+
+    // TRICK 2: Button shrinks & disappears
+    function shrinkButton(btn) {
+      let scale = parseFloat(btn.getAttribute('data-scale') || '1');
+      scale -= 0.35;
+      if (scale <= 0.1) {
+        btn.style.display = 'none';
+      } else {
+        btn.setAttribute('data-scale', scale);
+        btn.style.transform = `scale(${scale})`;
+        btn.style.opacity = scale;
+      }
+    }
+
+    // TRICK 3: Swaps option order
+    function swapOptions() {
+      const container = document.getElementById('optionsBox');
+      for (let i = container.children.length; i >= 0; i--) {
+        container.appendChild(container.children[Math.random() * i | 0]);
+      }
+    }
+
+    function handleCorrect() {
+      currentStep++;
+      if (currentStep < quizData.length) {
+        renderQuestion();
+      } else {
+        showFinalScreen();
+      }
+    }
+
+    function showFinalScreen() {
+      document.getElementById('quizCard').style.display = 'none';
+      document.getElementById('finalScreen').style.display = 'block';
+      
+      // Launch romantic celebration confetti
       confetti({
-        particleCount: 150,
-        spread: 80,
-        origin: { y: 0.6 }
+        particleCount: 200,
+        spread: 100,
+        origin: { y: 0.6 },
+        colors: ['#ff4b6e', '#ff9a9e', '#ffffff', '#ffccd5']
       });
     }
   </script>
