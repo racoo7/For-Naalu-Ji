@@ -99,6 +99,21 @@
       40%, 80% { transform: translateX(6px); }
     }
 
+    /* SCORECARD STYLING */
+    .score-box {
+      background: #fff0f3;
+      border: 2px dashed #ff4b6e;
+      border-radius: 20px;
+      padding: 15px;
+      margin: 15px 0;
+    }
+    .score-number {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #ff4b6e;
+      margin: 5px 0;
+    }
+
     .start-btn {
       background-color: #ff4b6e;
       color: white;
@@ -142,10 +157,18 @@
     </div>
   </div>
 
-  <!-- 🎉 CLOSING CARD -->
+  <!-- 🎉 CLOSING CARD WITH SCORECARD -->
   <div class="card" id="finalScreen">
     <div class="badge">Happy Girlfriend Day, Bebo! ❤️</div>
-    <h1 style="color: #ff4b6e; font-size: 1.5rem; margin-bottom: 12px;">You Passed My Love! 👑</h1>
+    <h1 style="color: #ff4b6e; font-size: 1.5rem; margin-bottom: 5px;">You Passed My Love! 👑</h1>
+    
+    <!-- SCORECARD DISPLAY -->
+    <div class="score-box">
+      <div style="font-size: 0.9rem; color: #888; font-weight: 600;">FINAL SCORECARD</div>
+      <div class="score-number">5 / 5 🏆</div>
+      <div style="font-size: 0.95rem; color: #28a745; font-weight: 700;">100% Correct — Perfect Girlfriend!</div>
+    </div>
+
     <p style="color: #555; font-size: 1rem; line-height: 1.6; margin-bottom: 20px;">
       I knew you'd get every answer right, Naalu! 😏😉😆 You truly are the best thing that ever happened to me, my cute Laado. 
       <br><br>
@@ -198,7 +221,15 @@
 
     let currentStep = 0;
 
+    // Trigger Phone Vibration
+    function triggerVibration(pattern = 40) {
+      if ("vibrate" in navigator) {
+        navigator.vibrate(pattern);
+      }
+    }
+
     function startQuiz() {
+      triggerVibration(50);
       document.getElementById('startScreen').style.display = 'none';
       document.getElementById('quizCard').style.display = 'block';
       renderQuestion();
@@ -229,11 +260,19 @@
       });
     }
 
-    // 💚 HANDLE CORRECT ANSWER CLICK
+    // 💚 HANDLE CORRECT ANSWER
     function handleCorrect(btn) {
+      triggerVibration([50, 50, 50]); // Triple pulse vibration on correct
       btn.classList.add('correct-flash');
       
-      // Wait 0.4 seconds so she sees the green flash before moving to the next question
+      // Mini celebration confetti burst on correct answer
+      confetti({
+        particleCount: 35,
+        spread: 60,
+        origin: { y: 0.7 },
+        colors: ['#28a745', '#ff4b6e', '#ffffff']
+      });
+
       setTimeout(() => {
         currentStep++;
         if (currentStep < quizData.length) {
@@ -241,11 +280,12 @@
         } else {
           showFinalScreen();
         }
-      }, 400);
+      }, 500);
     }
 
-    // ❤️ HANDLE WRONG ANSWER CLICK
+    // ❤️ HANDLE WRONG ANSWER
     function handleWrong(btn, trick) {
+      triggerVibration(100); // Stronger single vibration on wrong
       btn.classList.add('wrong-flash');
       
       setTimeout(() => {
@@ -295,14 +335,16 @@
     }
 
     function showFinalScreen() {
+      triggerVibration([100, 50, 100, 50, 200]); // Victory vibration pattern
       document.getElementById('quizCard').style.display = 'none';
       document.getElementById('finalScreen').style.display = 'block';
       
+      // Grand celebration confetti burst
       confetti({
-        particleCount: 200,
+        particleCount: 220,
         spread: 100,
         origin: { y: 0.6 },
-        colors: ['#ff4b6e', '#ff9a9e', '#ffffff', '#ffccd5']
+        colors: ['#ff4b6e', '#ff9a9e', '#ffffff', '#28a745', '#ffd1d6']
       });
     }
   </script>
