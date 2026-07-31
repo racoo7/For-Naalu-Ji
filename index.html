@@ -71,9 +71,34 @@
       color: #4a4a4a;
       cursor: pointer;
       box-shadow: 0 3px 10px rgba(0,0,0,0.03);
-      transition: transform 0.2s ease, opacity 0.2s ease;
+      transition: all 0.2s ease;
       touch-action: manipulation;
     }
+
+    /* 💚 GREEN FEEDBACK FOR CORRECT ANSWER */
+    .correct-flash {
+      background-color: #28a745 !important;
+      color: white !important;
+      border-color: #28a745 !important;
+      box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4) !important;
+      transform: scale(1.03);
+    }
+
+    /* ❤️ RED FEEDBACK FOR WRONG ANSWER */
+    .wrong-flash {
+      background-color: #dc3545 !important;
+      color: white !important;
+      border-color: #dc3545 !important;
+      box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4) !important;
+      animation: shake 0.3s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
     .start-btn {
       background-color: #ff4b6e;
       color: white;
@@ -107,7 +132,7 @@
     <button class="start-btn" onclick="startQuiz()">Start The Quiz ❤️</button>
   </div>
 
-  <!-- ❓ QUIZ CARD (IMAGE-FREE) -->
+  <!-- ❓ QUIZ CARD -->
   <div class="card" id="quizCard">
     <div class="badge" id="stepText">Question 1</div>
     <h1 id="questionText">Loading...</h1>
@@ -129,7 +154,6 @@
   </div>
 
   <script>
-    // 💡 YOUR QUESTIONS & ANSWERS (Add or edit questions right here!)
     const quizData = [
       {
         question: "💖 Who's your favorite person to spend an entire day with?",
@@ -194,24 +218,52 @@
         btn.innerText = opt.text;
 
         if (opt.isCorrect) {
-          btn.onclick = () => handleCorrect();
+          btn.onclick = (e) => handleCorrect(e.target);
         } else {
-          if (opt.trick === 'runaway') {
-            btn.onclick = (e) => dodgeButton(e.target);
-            btn.ontouchstart = (e) => dodgeButton(e.target);
-          } else if (opt.trick === 'shrink') {
-            btn.onclick = (e) => shrinkButton(e.target);
-          } else if (opt.trick === 'alert') {
-            btn.onclick = () => alert('⚠️ SYSTEM ERROR: Illegal answer detected! Bebo, pick the right option! 😜');
-          } else if (opt.trick === 'swap') {
-            btn.onclick = () => swapOptions();
-          }
+          btn.onclick = (e) => handleWrong(e.target, opt.trick);
+          btn.ontouchstart = (e) => {
+            if (opt.trick === 'runaway') handleWrong(e.target, opt.trick);
+          };
         }
         optionsBox.appendChild(btn);
       });
     }
 
-    // TRICK 1: Button teleports away on mobile touch / click
+    // 💚 HANDLE CORRECT ANSWER CLICK
+    function handleCorrect(btn) {
+      btn.classList.add('correct-flash');
+      
+      // Wait 0.4 seconds so she sees the green flash before moving to the next question
+      setTimeout(() => {
+        currentStep++;
+        if (currentStep < quizData.length) {
+          renderQuestion();
+        } else {
+          showFinalScreen();
+        }
+      }, 400);
+    }
+
+    // ❤️ HANDLE WRONG ANSWER CLICK
+    function handleWrong(btn, trick) {
+      btn.classList.add('wrong-flash');
+      
+      setTimeout(() => {
+        btn.classList.remove('wrong-flash');
+
+        if (trick === 'runaway') {
+          dodgeButton(btn);
+        } else if (trick === 'shrink') {
+          shrinkButton(btn);
+        } else if (trick === 'alert') {
+          alert('⚠️ SYSTEM ERROR: Illegal answer detected! Bebo, pick the right option! 😜');
+        } else if (trick === 'swap') {
+          swapOptions();
+        }
+      }, 250);
+    }
+
+    // TRICK 1: Runaway / Teleport
     function dodgeButton(btn) {
       btn.style.position = 'fixed';
       const x = Math.random() * (window.innerWidth - btn.offsetWidth - 30);
@@ -221,7 +273,7 @@
       btn.style.zIndex = '999';
     }
 
-    // TRICK 2: Button shrinks & disappears
+    // TRICK 2: Shrink
     function shrinkButton(btn) {
       let scale = parseFloat(btn.getAttribute('data-scale') || '1');
       scale -= 0.35;
@@ -234,7 +286,7 @@
       }
     }
 
-    // TRICK 3: Swaps option order
+    // TRICK 3: Swap options
     function swapOptions() {
       const container = document.getElementById('optionsBox');
       for (let i = container.children.length; i >= 0; i--) {
@@ -242,20 +294,10 @@
       }
     }
 
-    function handleCorrect() {
-      currentStep++;
-      if (currentStep < quizData.length) {
-        renderQuestion();
-      } else {
-        showFinalScreen();
-      }
-    }
-
     function showFinalScreen() {
       document.getElementById('quizCard').style.display = 'none';
       document.getElementById('finalScreen').style.display = 'block';
       
-      // Launch romantic celebration confetti
       confetti({
         particleCount: 200,
         spread: 100,
