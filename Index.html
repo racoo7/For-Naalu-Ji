@@ -1,1 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Quick Question... ❤️</title>
+  <!-- Confetti Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #ffe6e8;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      overflow: hidden;
+    }
+    h1 {
+      color: #d63384;
+      font-size: 2rem;
+      margin-bottom: 30px;
+      padding: 0 20px;
+    }
+    .btn-container {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    button {
+      padding: 12px 28px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: transform 0.2s ease, font-size 0.2s ease;
+    }
+    #yesBtn {
+      background-color: #ff4b6e;
+      color: white;
+      box-shadow: 0 4px 15px rgba(255, 75, 110, 0.4);
+    }
+    #noBtn {
+      background-color: #6c757d;
+      color: white;
+      position: absolute;
+      left: 120px;
+    }
+    #successMessage {
+      display: none;
+      font-size: 1.8rem;
+      color: #d63384;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
 
+  <div id="quizBox">
+    <h1 id="questionText">Will you go out on a date with me this weekend? 💕</h1>
+    <div class="btn-container">
+      <button id="yesBtn" onclick="handleYes()">Yes! 🥰</button>
+      <button id="noBtn" onmouseover="dodge()" onclick="dodge()">No 😜</button>
+    </div>
+  </div>
+
+  <div id="successMessage">
+    🎉 Yay! I knew you'd say yes! <br> Get ready for the best date ever ❤️
+  </div>
+
+  <script>
+    let yesScale = 1;
+
+    function dodge() {
+      const btn = document.getElementById('noBtn');
+      // Calculate random positions within screen bounds
+      const x = Math.random() * (window.innerWidth - btn.offsetWidth - 40);
+      const y = Math.random() * (window.innerHeight - btn.offsetHeight - 40);
+      
+      btn.style.position = 'fixed';
+      btn.style.left = `${Math.max(20, x)}px`;
+      btn.style.top = `${Math.max(20, y)}px`;
+
+      // Make Yes button bigger every time she tries to click No
+      yesScale += 0.2;
+      document.getElementById('yesBtn').style.transform = `scale(${yesScale})`;
+    }
+
+    function handleYes() {
+      document.getElementById('quizBox').style.display = 'none';
+      document.getElementById('successMessage').style.display = 'block';
+      
+      // Trigger Confetti
+      confetti({
+        particleCount: 150,
+        spread: 80,
+        origin: { y: 0.6 }
+      });
+    }
+  </script>
+</body>
+</html>
